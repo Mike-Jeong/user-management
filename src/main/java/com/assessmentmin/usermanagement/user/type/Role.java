@@ -1,5 +1,7 @@
 package com.assessmentmin.usermanagement.user.type;
 
+import com.assessmentmin.usermanagement.exception.UserException;
+import com.assessmentmin.usermanagement.exception.type.ErrorCode;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
@@ -16,6 +18,6 @@ public enum Role {
         return Arrays.stream(values())
                 .filter(e -> e.roleString.equals(role))
                 .findFirst()
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new UserException(ErrorCode.UNSUPPORTED_USER_ROLE));
     }
 }
