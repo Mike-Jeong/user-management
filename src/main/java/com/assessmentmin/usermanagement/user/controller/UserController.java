@@ -2,10 +2,7 @@ package com.assessmentmin.usermanagement.user.controller;
 
 import com.assessmentmin.usermanagement.common.dto.PageNumber;
 import com.assessmentmin.usermanagement.common.dto.Response;
-import com.assessmentmin.usermanagement.user.dto.CreateUserDto;
-import com.assessmentmin.usermanagement.user.dto.UpdateUserNameRequest;
-import com.assessmentmin.usermanagement.user.dto.UserDto;
-import com.assessmentmin.usermanagement.user.dto.UserInformation;
+import com.assessmentmin.usermanagement.user.dto.*;
 import com.assessmentmin.usermanagement.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +45,14 @@ public class UserController {
     public ResponseEntity<Response> updateUserName(@RequestBody @Valid UpdateUserNameRequest updateUserNameRequest){
 
         userService.updateUserName(updateUserNameRequest);
+
+        return ResponseEntity.ok().body(Response.ok());
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Response> deleteUser(@RequestBody @Valid DeleteUserRequest deleteUserRequest){
+
+        userService.deleteUser(deleteUserRequest);
 
         return ResponseEntity.ok().body(Response.ok());
     }

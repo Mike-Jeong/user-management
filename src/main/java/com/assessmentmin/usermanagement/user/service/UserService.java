@@ -4,6 +4,7 @@ import com.assessmentmin.usermanagement.common.dto.PageNumber;
 import com.assessmentmin.usermanagement.exception.UserException;
 import com.assessmentmin.usermanagement.exception.type.ErrorCode;
 import com.assessmentmin.usermanagement.user.dto.CreateUserDto;
+import com.assessmentmin.usermanagement.user.dto.DeleteUserRequest;
 import com.assessmentmin.usermanagement.user.dto.UpdateUserNameRequest;
 import com.assessmentmin.usermanagement.user.dto.UserDto;
 import com.assessmentmin.usermanagement.user.entity.User;
@@ -56,6 +57,15 @@ public class UserService {
         User user = findUser(updateUserNameRequest.getUserId());
 
         user.updateUserName(updateUserNameRequest.getNewUserName());
+    }
+
+    @Transactional
+    public void deleteUser(DeleteUserRequest deleteUserRequest) {
+
+        User user = findUser(deleteUserRequest.getUserId());
+
+        userRepository.delete(user);
+
     }
 
     private User findUser(String userId) {
