@@ -12,4 +12,9 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(e.getStatus(), e.getErrorCode(), e.getErrorMessage());
     }
 
+    @ExceptionHandler(AuthException.class)
+    public ErrorResponse jwtExceptionHandler(AuthException e) {
+        return new ErrorResponse(e.getStatus(), e.getErrorCode(), e.getErrorMessage());
+    }
+
 }
