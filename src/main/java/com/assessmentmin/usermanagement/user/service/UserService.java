@@ -1,6 +1,7 @@
 package com.assessmentmin.usermanagement.user.service;
 
 import com.assessmentmin.usermanagement.common.dto.PageNumber;
+import com.assessmentmin.usermanagement.user.dto.CreateUserDto;
 import com.assessmentmin.usermanagement.user.dto.UserDto;
 import com.assessmentmin.usermanagement.user.entity.User;
 import com.assessmentmin.usermanagement.user.repository.UserRepository;
@@ -30,5 +31,19 @@ public class UserService {
         return userList.stream()
                 .map(UserDto::fromUser)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void createUser(CreateUserDto createUserDto) {
+
+        User user = User.builder()
+                .userId(createUserDto.getUserId())
+                .name(createUserDto.getUserName())
+                .password(createUserDto.getPassword())
+                .auth(createUserDto.getRole())
+                .build();
+
+        userRepository.save(user);
+
     }
 }
