@@ -3,6 +3,7 @@ package com.assessmentmin.usermanagement.user.controller;
 import com.assessmentmin.usermanagement.common.dto.PageNumber;
 import com.assessmentmin.usermanagement.common.dto.Response;
 import com.assessmentmin.usermanagement.user.dto.CreateUserDto;
+import com.assessmentmin.usermanagement.user.dto.UpdateUserNameRequest;
 import com.assessmentmin.usermanagement.user.dto.UserDto;
 import com.assessmentmin.usermanagement.user.dto.UserInformation;
 import com.assessmentmin.usermanagement.user.service.UserService;
@@ -42,4 +43,13 @@ public class UserController {
 
         return ResponseEntity.ok().body(Response.ok());
     }
+
+    @PostMapping
+    public ResponseEntity<Response> updateUserName(@RequestBody @Valid UpdateUserNameRequest updateUserNameRequest){
+
+        userService.updateUserName(updateUserNameRequest);
+
+        return ResponseEntity.ok().body(Response.ok());
+    }
+
 }
