@@ -41,7 +41,7 @@ public class UserController {
         return ResponseEntity.ok().body(Response.ok());
     }
 
-    @PostMapping
+    @PutMapping
     public ResponseEntity<Response> updateUserName(@RequestBody @Valid UpdateUserNameRequest updateUserNameRequest){
 
         userService.updateUserName(updateUserNameRequest);
