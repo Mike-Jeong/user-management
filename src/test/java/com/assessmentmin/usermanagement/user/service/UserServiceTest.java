@@ -101,11 +101,12 @@ class UserServiceTest {
     void deleteUser_DeletesUser() {
         // Given
         String userId = "123";
+        UserDeleteRequest userDeleteRequest = new UserDeleteRequest(userId);
         User user = new User(1 ,userId, "test", "password", Role.SYSTEM_USER);
         given(userRepository.findByUserId(userId)).willReturn(Optional.of(user));
 
         // When
-        userService.deleteUser(userId);
+        userService.deleteUser(userDeleteRequest);
 
         // Then
         verify(userRepository, times(1)).delete(any(User.class));

@@ -46,7 +46,7 @@ public class UserService {
     }
 
     @Transactional
-    public void createUser(CreateUserDto createUserDto) {
+    public Integer createUser(CreateUserDto createUserDto) {
 
         userIdValidation(createUserDto.getUserId());
 
@@ -57,26 +57,36 @@ public class UserService {
                 .auth(createUserDto.getRole())
                 .build();
 
-        userRepository.save(user);
+        Integer userIdx = userRepository.save(user).getIdx();
+
+        return userIdx;
 
     }
 
     @Transactional
-    public void updateUserName(UpdateUserNameRequest updateUserNameRequest) {
+    public Integer updateUserName(UpdateUserNameRequest updateUserNameRequest) {
 
         User user = findUser(updateUserNameRequest.getUserId());
 
         user.updateUserName(updateUserNameRequest.getNewUserName());
+
+        return user.getIdx();
     }
 
     @Transactional
-    public void deleteUser(String userDeleteId) {
+    public Integer deleteUser(UserDeleteRequest userDeleteRequest) {
 
-        preventDeleteUserItself(userDeleteId);
+        System.out.println(userDeleteRequest.getUserDeleteId());
 
-        User user = findUser(userDeleteId);
+        preventDeleteUserItself(userDeleteRequest.getUserDeleteId());
+
+        User user = findUser(userDeleteRequest.getUserDeleteId());
+
+        Integer userIdx = user.getIdx();
 
         userRepository.delete(user);
+
+        return userIdx;
 
     }
 

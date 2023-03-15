@@ -1,9 +1,7 @@
 package com.assessmentmin.usermanagement.user.controller;
 
+import com.assessmentmin.usermanagement.aop.LogUserHistory;
 import com.assessmentmin.usermanagement.auth.dto.PrincipalDetails;
-import com.assessmentmin.usermanagement.exception.UserException;
-import com.assessmentmin.usermanagement.exception.type.ErrorCode;
-import com.assessmentmin.usermanagement.user.dto.SignInRequest;
 import com.assessmentmin.usermanagement.common.dto.PageNumber;
 import com.assessmentmin.usermanagement.common.dto.Response;
 import com.assessmentmin.usermanagement.user.dto.*;
@@ -18,10 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,8 +29,7 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('SYSTEM_USER')")
     @GetMapping("/home")
-    public String userHome(Model model,
-                           HttpServletRequest request) {
+    public String userHome(Model model) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         PrincipalDetails principalDetails = (PrincipalDetails) auth.getPrincipal();
@@ -50,9 +44,12 @@ public class UserController {
     }
 
     @PostMapping("/signIn")
-    public ResponseEntity<Response> signIn(@RequestBody @Valid SignInRequest signInRequest) {
+    @LogUserHistory
+    public ResponseEntity<Response> signIn(@RequestBody @Valid SignInRequest signInRequest,
+                                           HttpServletRequest request) {
 
-        userService.createUser(SignInRequest.toCreateUserDto(signInRequest));
+        Integer userIdx = userService.createUser(SignInRequest.toCreateUserDto(signInRequest));
+        request.setAttribute("userIdx", userIdx);
 
         return ResponseEntity.ok().body(Response.ok());
 
@@ -91,29 +88,36 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Response> createUser(@RequestBody @Valid CreateUserRequest createUserRequest) {
+    @LogUserHistory
+    public ResponseEntity<Response> createUser(@RequestBody @Valid CreateUserRequest createUserRequest,
+                                               HttpServletRequest request) {
 
-        userService.createUser(CreateUserRequest.toCreateUserDto(createUserRequest));
+        Integer userIdx = userService.createUser(CreateUserRequest.toCreateUserDto(createUserRequest));
+        request.setAttribute("userIdx", userIdx);
 
         return ResponseEntity.ok().body(Response.ok());
     }
 
     @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
     @PutMapping
-    public ResponseEntity<Response> updateUserName(@RequestBody @Valid UpdateUserNameRequest updateUserNameRequest) {
+    @LogUserHistory
+    public ResponseEntity<Response> updateUserName(@RequestBody @Valid UpdateUserNameRequest updateUserNameRequest,
+                                                   HttpServletRequest request) {
 
-        userService.updateUserName(updateUserNameRequest);
-
-        String redirectUrl = "/user/" + updateUserNameRequest.getUserId();
+        Integer userIdx = userService.updateUserName(updateUserNameRequest);
+        request.setAttribute("userIdx", userIdx);
 
         return ResponseEntity.ok().body(Response.ok());
     }
 
     @PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
     @DeleteMapping
-    public ResponseEntity<Response> deleteUser(@RequestBody @Valid String userDeleteId) {
+    @LogUserHistory
+    public ResponseEntity<Response> deleteUser(@RequestBody @Valid UserDeleteRequest userDeleteRequest,
+                                               HttpServletRequest request) {
 
-        userService.deleteUser(userDeleteId);
+        Integer userIdx = userService.deleteUser(userDeleteRequest);
+        request.setAttribute("userIdx", userIdx);
 
         return ResponseEntity.ok().body(Response.ok());
     }
