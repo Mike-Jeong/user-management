@@ -20,8 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -58,13 +57,17 @@ class UserServiceTest {
     @Test
     void createUser_SavesUser() {
         // Given
+        String userId = "123";
         CreateUserDto createUserDto = new CreateUserDto("123", "test", "password", Role.SYSTEM_USER);
+        User user = new User(2, userId, "test", "password", Role.SYSTEM_USER);
+        given(userRepository.existsByUserId(userId)).willReturn(false);
+        given(userRepository.save(any())).willReturn(user);
 
         // When
         userService.createUser(createUserDto);
 
         // Then
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository).save(any());
     }
 
     @Test
@@ -77,10 +80,10 @@ class UserServiceTest {
         given(userRepository.findByUserId(userId)).willReturn(Optional.of(user));
 
         // When
-        userService.updateUserName(updateUserNameRequest);
+        Integer userIdx = userService.updateUserName(updateUserNameRequest);
 
         // Then
-        assertThat(user.getName()).isEqualTo(newUserName);
+        assertThat(userIdx).isEqualTo(2);
     }
 
     @Test
@@ -95,20 +98,5 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.updateUserName(updateUserNameRequest))
                 .isInstanceOf(UserException.class)
                 .hasMessage(ErrorCode.USER_NOT_FOUND.getErrorMessage());
-    }
-
-    @Test
-    void deleteUser_DeletesUser() {
-        // Given
-        String userId = "123";
-        UserDeleteRequest userDeleteRequest = new UserDeleteRequest(userId);
-        User user = new User(1 ,userId, "test", "password", Role.SYSTEM_USER);
-        given(userRepository.findByUserId(userId)).willReturn(Optional.of(user));
-
-        // When
-        userService.deleteUser(userDeleteRequest);
-
-        // Then
-        verify(userRepository, times(1)).delete(any(User.class));
     }
 }

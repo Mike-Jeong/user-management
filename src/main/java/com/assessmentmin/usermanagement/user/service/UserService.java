@@ -76,8 +76,6 @@ public class UserService {
     @Transactional
     public Integer deleteUser(UserDeleteRequest userDeleteRequest) {
 
-        System.out.println(userDeleteRequest.getUserDeleteId());
-
         preventDeleteUserItself(userDeleteRequest.getUserDeleteId());
 
         User user = findUser(userDeleteRequest.getUserDeleteId());
