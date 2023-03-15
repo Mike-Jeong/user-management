@@ -58,7 +58,7 @@
 
 없음 ("200 OK", "성공")
 
-## PUT /user
+## PUT /users
 
 ### Description
 
@@ -75,7 +75,7 @@
 
 없음 ("200 OK", "성공")
 
-## DELETE /user
+## DELETE /users
 
 ### Description
 
