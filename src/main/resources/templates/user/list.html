@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>유저 리스트</title>
+    <style>
+        .list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .list table th, .list table td {
+            border: solid 1px #000;
+        }
+    </style>
+</head>
+<body>
+<h1>유저 리스트</h1>
+
+<div class="list">
+
+    <table>
+        <thead>
+        <tr>
+            <th>NO</th>
+            <th>
+                아이디
+            </th>
+            <th>
+                이름
+            </th>
+            <th>
+                관리자여부
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${userInformationList}">
+            <td th:text="${user.getUserIndex()}">1</td>
+            <td>
+                <a th:text="${user.getUserId()}"
+                   th:href="${'/users/' + user.getUserId()}">
+                    admin</a>
+            </td>
+            <td th:text="${user.getName()}">홍길동</td>
+            <td th:text="${user.getAuth()}">관리자</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

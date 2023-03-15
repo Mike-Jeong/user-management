@@ -21,7 +21,7 @@ public class UserDto {
         this.auth = auth;
     }
 
-    public static UserDto fromUser(User user){
+    public static UserDto fromUser(User user) {
         return UserDto.builder()
                 .idx(user.getIdx())
                 .userId(user.getUserId())

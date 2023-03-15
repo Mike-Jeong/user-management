@@ -9,6 +9,6 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NotNull
 public class UpdateUserNameRequest {
-    String userId;
-    String newUserName;
+    private final String userId;
+    private final String newUserName;
 }

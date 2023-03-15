@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인페이지</title>
+</head>
+<body>
+<form method="post" action="/auth/login">
+
+    <div>
+        <input type="text" name="userId" placeholder="아이디 입력" required/>
+    </div>
+    <div>
+        <input type="text" name="password" th:value="${password}" placeholder="비밀번호 입력"/>
+    </div>
+    <div>
+        <button type="submit"> 로그인</button>
+    </div>
+
+</form>
+
+<p th:text="${#request.getAttribute('errorMessage')}"></p>
+
+<a href='/users/signIn'>회원가입</a>
+</body>
+</html>

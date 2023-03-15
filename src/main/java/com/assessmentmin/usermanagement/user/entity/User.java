@@ -33,7 +33,6 @@ public class User {
     private String name;
     @Column(name = "user_auth")
     @Enumerated(EnumType.STRING)
-    @Length(max = 20)
     @NotNull
     private Role auth;
 
@@ -46,7 +45,7 @@ public class User {
         this.auth = auth;
     }
 
-    public void updateUserName(String name){
+    public void updateUserName(String name) {
         this.name = name;
     }
 

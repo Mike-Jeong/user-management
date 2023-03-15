@@ -1,20 +1,20 @@
 package com.assessmentmin.usermanagement.exception;
 
-import com.assessmentmin.usermanagement.exception.dto.ErrorResponse;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+import javax.servlet.http.HttpServletRequest;
+
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserException.class)
-    public ErrorResponse userExceptionHandler(UserException e) {
-        return new ErrorResponse(e.getStatus(), e.getErrorCode(), e.getErrorMessage());
-    }
+    @ExceptionHandler(Exception.class)
+    public String errorHandler(Model model, Exception e, HttpServletRequest request) {
 
-    @ExceptionHandler(AuthException.class)
-    public ErrorResponse jwtExceptionHandler(AuthException e) {
-        return new ErrorResponse(e.getStatus(), e.getErrorCode(), e.getErrorMessage());
+        System.out.println(e.getMessage());
+        model.addAttribute("errorMessage", e.getMessage().isBlank() ? "404 NOT FOUND" : e.getMessage());
+        return "error";
     }
 
 }

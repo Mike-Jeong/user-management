@@ -17,10 +17,10 @@ public class UserInformation {
         this.userIndex = idx;
         this.userId = userId;
         this.name = name;
-        this.auth = auth.toString();
+        this.auth = auth.getRoleString();
     }
 
-    public static UserInformation fromUserDto(UserDto userDto){
+    public static UserInformation fromUserDto(UserDto userDto) {
         return UserInformation.builder()
                 .idx(userDto.getIdx())
                 .userId(userDto.getUserId())

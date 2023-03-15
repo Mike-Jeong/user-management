@@ -1,16 +1,16 @@
 package com.assessmentmin.usermanagement.user.service;
 
+import com.assessmentmin.usermanagement.auth.dto.PrincipalDetails;
 import com.assessmentmin.usermanagement.common.dto.PageNumber;
 import com.assessmentmin.usermanagement.exception.UserException;
 import com.assessmentmin.usermanagement.exception.type.ErrorCode;
-import com.assessmentmin.usermanagement.user.dto.CreateUserDto;
-import com.assessmentmin.usermanagement.user.dto.DeleteUserRequest;
-import com.assessmentmin.usermanagement.user.dto.UpdateUserNameRequest;
-import com.assessmentmin.usermanagement.user.dto.UserDto;
+import com.assessmentmin.usermanagement.user.dto.*;
 import com.assessmentmin.usermanagement.user.entity.User;
 import com.assessmentmin.usermanagement.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,8 +37,18 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public UserDto getUser(String userId) {
+
+        User user = findUser(userId);
+
+        return UserDto.fromUser(user);
+    }
+
     @Transactional
     public void createUser(CreateUserDto createUserDto) {
+
+        userIdValidation(createUserDto.getUserId());
 
         User user = User.builder()
                 .userId(createUserDto.getUserId())
@@ -60,16 +70,36 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(DeleteUserRequest deleteUserRequest) {
+    public void deleteUser(String userDeleteId) {
 
-        User user = findUser(deleteUserRequest.getUserId());
+        preventDeleteUserItself(userDeleteId);
+
+        User user = findUser(userDeleteId);
 
         userRepository.delete(user);
+
+    }
+
+    private void preventDeleteUserItself(String userDeleteId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        PrincipalDetails principalDetails = (PrincipalDetails) auth.getPrincipal();
+
+        if (principalDetails.getUsername().equals(userDeleteId)) {
+            throw new UserException(ErrorCode.UNAUTHORIZED_USER);
+        }
 
     }
 
     private User findUser(String userId) {
         return userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private void userIdValidation(String userId) {
+
+        if (userRepository.existsByUserId(userId)) {
+            throw new UserException(ErrorCode.USER_ID_ALREADY_USED);
+        }
+
     }
 }

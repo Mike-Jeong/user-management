@@ -2,11 +2,13 @@ package com.assessmentmin.usermanagement.user.type;
 
 import com.assessmentmin.usermanagement.exception.UserException;
 import com.assessmentmin.usermanagement.exception.type.ErrorCode;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
 @RequiredArgsConstructor
+@Getter
 public enum Role {
 
     SYSTEM_ADMIN("관리자"),

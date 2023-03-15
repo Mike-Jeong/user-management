@@ -3,10 +3,7 @@ package com.assessmentmin.usermanagement.user.service;
 import com.assessmentmin.usermanagement.common.dto.PageNumber;
 import com.assessmentmin.usermanagement.exception.UserException;
 import com.assessmentmin.usermanagement.exception.type.ErrorCode;
-import com.assessmentmin.usermanagement.user.dto.CreateUserDto;
-import com.assessmentmin.usermanagement.user.dto.DeleteUserRequest;
-import com.assessmentmin.usermanagement.user.dto.UpdateUserNameRequest;
-import com.assessmentmin.usermanagement.user.dto.UserDto;
+import com.assessmentmin.usermanagement.user.dto.*;
 import com.assessmentmin.usermanagement.user.entity.User;
 import com.assessmentmin.usermanagement.user.repository.UserRepository;
 import com.assessmentmin.usermanagement.user.type.Role;
@@ -104,12 +101,11 @@ class UserServiceTest {
     void deleteUser_DeletesUser() {
         // Given
         String userId = "123";
-        DeleteUserRequest deleteUserRequest = new DeleteUserRequest(userId);
         User user = new User(1 ,userId, "test", "password", Role.SYSTEM_USER);
         given(userRepository.findByUserId(userId)).willReturn(Optional.of(user));
 
         // When
-        userService.deleteUser(deleteUserRequest);
+        userService.deleteUser(userId);
 
         // Then
         verify(userRepository, times(1)).delete(any(User.class));

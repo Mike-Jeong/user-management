@@ -1,7 +1,6 @@
 package com.assessmentmin.usermanagement.config;
 
-import com.assessmentmin.usermanagement.security.CustomAccessDeniedHandler;
-import com.assessmentmin.usermanagement.security.CustomAuthenticationEntryPoint;
+import com.assessmentmin.usermanagement.security.UserAuthenticationFailureHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -9,9 +8,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -31,27 +30,42 @@ public class SecurityConfig {
     }
 
     @Bean
+    UserAuthenticationFailureHandler getSuccessHandler() {
+        return new UserAuthenticationFailureHandler();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-                .antMatchers("/auth/login")
-                .permitAll()
-                .anyRequest().authenticated();
+                .antMatchers("/", "/error", "/users/signIn")
+                .permitAll();
 
-        http.headers().frameOptions().disable();
+        http.authorizeRequests()
+                .anyRequest()
+                .authenticated();
+
+        http.headers().frameOptions().sameOrigin();
 
         http.cors().configurationSource(corsConfigurationSource())
                 .and()
                 .httpBasic().disable()
                 .csrf().disable();
 
+        http.formLogin()
+                .loginPage("/auth/login")
+                .usernameParameter("userId")
+                .failureHandler(authenticationFailureHandler())
+                .permitAll();
+
+        http.logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true);
+
         http.sessionManagement()
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true);
-
-        http.exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPointHandler())
-                .accessDeniedHandler(accessDeniedHandler());
 
         return http.build();
     }
@@ -72,13 +86,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationEntryPoint authenticationEntryPointHandler() {
-        return new CustomAuthenticationEntryPoint(objectMapper);
-    }
-
-    @Bean
-    public AccessDeniedHandler accessDeniedHandler() {
-        return new CustomAccessDeniedHandler(objectMapper);
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new UserAuthenticationFailureHandler();
     }
 
 }

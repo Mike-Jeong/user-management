@@ -25,6 +25,10 @@ public class PrincipalDetails implements UserDetails {
         return collect;
     }
 
+    public String getUserNickName() {
+        return user.getName();
+    }
+
     @Override
     public String getPassword() {
         return encPassword;
